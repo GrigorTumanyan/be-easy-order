@@ -25,6 +25,6 @@ hs_err_pid*
 replay_pid*
 # Custom
 /shelf/
-/workspace.xml
+/.idea/workspace.xml
 /targeget/
-
+/.idea/
