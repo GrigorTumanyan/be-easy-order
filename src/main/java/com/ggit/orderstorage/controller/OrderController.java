@@ -1,10 +1,10 @@
 package com.ggit.orderstorage.controller;
 
 import ch.qos.logback.core.testUtil.RandomUtil;
-import com.ggit.orderstorage.dto.FoodDto;
-import com.ggit.orderstorage.dto.OrderDto;
-import com.ggit.orderstorage.entity.Food;
-import com.ggit.orderstorage.entity.Order;
+import com.ggit.orderstorage.data.dto.FoodDto;
+import com.ggit.orderstorage.data.dto.OrderDto;
+import com.ggit.orderstorage.data.order.Food;
+import com.ggit.orderstorage.data.order.Order;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,6 @@ public class OrderController {
 			foodDto1.setCount(i * 4);
 			foodDto1.setFood("B");
 			foodDto1.setPrice(i * 1000);
-
 
 			dto.setItems(List.of(foodDto1, foodDto));
 			dto.setName("John" + i);

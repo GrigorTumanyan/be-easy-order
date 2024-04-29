@@ -1,4 +1,4 @@
-package com.ggit.orderstorage.entity;
+package com.ggit.orderstorage.data.order;
 
 import java.util.List;
 

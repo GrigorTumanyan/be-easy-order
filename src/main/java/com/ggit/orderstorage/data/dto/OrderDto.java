@@ -1,4 +1,4 @@
-package com.ggit.orderstorage.dto;
+package com.ggit.orderstorage.data.dto;
 
 import java.util.List;
 

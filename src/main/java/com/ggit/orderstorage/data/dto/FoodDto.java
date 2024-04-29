@@ -1,13 +1,17 @@
-package com.ggit.orderstorage.entity;
+package com.ggit.orderstorage.data.dto;
 
-public class Food {
+public class FoodDto {
 
-	public String getName() {
-		return name;
+	private String food;
+	private int count;
+	private float price;
+
+	public String getFood() {
+		return food;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFood(String food) {
+		this.food = food;
 	}
 
 	public int getCount() {
@@ -25,10 +29,4 @@ public class Food {
 	public void setPrice(float price) {
 		this.price = price;
 	}
-
-	private String name;
-	private int count;
-	private float price;
-
-
 }
