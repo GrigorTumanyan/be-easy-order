@@ -1,4 +1,4 @@
-package com.ggit.orderstorage.data.dto;
+package com.ggit.orderstorage.data.dto.auth;
 
 import java.util.Objects;
 
