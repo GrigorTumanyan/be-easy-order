@@ -1,26 +1,30 @@
 package com.ggit.orderstorage.data.user;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-//import org.springframework.data.annotation.CreatedDate;
-//import org.springframework.data.annotation.LastModifiedDate;
 
+@Entity
+@Table(name = "users")
 public class User {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String name;
 	private String surname;
 	private String email;
 	private String password;
-	private String image;
-	private String phone;
-	private String address;
 	private UserType userType;
 	private Boolean active;
 	private String refreshToken;
 	private String activationForgottenPassword;
-//	@CreatedDate
+	//	@CreatedDate
 	private LocalDateTime createdDate;
-//	@LastModifiedDate
+	//	@LastModifiedDate
 	private LocalDateTime lastModifiedDate;
 
 
@@ -75,33 +79,6 @@ public class User {
 
 	public User setPassword(String password) {
 		this.password = password;
-		return this;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public User setImage(String image) {
-		this.image = image;
-		return this;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public User setPhone(String phone) {
-		this.phone = phone;
-		return this;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public User setAddress(String address) {
-		this.address = address;
 		return this;
 	}
 
