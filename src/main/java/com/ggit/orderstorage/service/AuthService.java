@@ -10,4 +10,5 @@ public interface AuthService {
 
 	void login(AuthenticationRequestDto dto);
 
+	String activateAccount(Long id);
 }
