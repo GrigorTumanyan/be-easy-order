@@ -2,6 +2,8 @@ package com.ggit.orderstorage.config;
 
 import com.ggit.orderstorage.service.security.jwt.JwtTokenFilter;
 import com.ggit.orderstorage.service.security.jwt.JwtTokenProvider;
+import java.util.Properties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -18,6 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class WebConfig {
+
+	@Value("${gmail.password}")
+	private  String gmailPassword;
 
 	private final JwtTokenProvider jwtTokenProvider;
 
@@ -48,9 +53,17 @@ public class WebConfig {
 	@Bean
 	public JavaMailSenderImpl mailSender() {
 		var javaMailSender = new JavaMailSenderImpl();
-		javaMailSender.setProtocol("SMTP");
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+
 		javaMailSender.setHost("smtp.gmail.com");
 		javaMailSender.setPort(587);
+		javaMailSender.setUsername("examplejava07@gmail.com");
+		javaMailSender.setPassword("azxj eqer zruz krwf");
+		javaMailSender.setJavaMailProperties(props);
+
 		return javaMailSender;
 
 	}
