@@ -10,15 +10,14 @@ public class UserUtil {
 	}
 
 	public static User registerDtoToUser(RegisterDto dto) {
-		var user = new User();
-		user.setEmail(dto.getEmail());
-		user.setName(dto.getName());
-		user.setSurname(dto.getSurname());
-		user.setPassword(dto.getPassword());
-		return user;
+		return new User()
+		.setEmail(dto.getEmail())
+		.setName(dto.getName())
+		.setSurname(dto.getSurname())
+		.setPassword(dto.getPassword());
 	}
 
-	public static UserDto UserToUserdto(User user) {
+	public static UserDto userToUserdto(User user) {
 		var userDto = new UserDto();
 		userDto.setEmail(user.getEmail());
 		userDto.setName(user.getName());

@@ -35,12 +35,12 @@ public class AuthServiceImpl implements AuthService {
 		var now = LocalDateTime.now();
 		dto.setPassword(passwordEncoder.encode(dto.getPassword()));
 		var user = UserUtil.registerDtoToUser(dto);
-		user.setCreatedDate(now);
-		user.setLastModifiedDate(now);
-		user.setUserType(UserType.USER);
+		user.setCreatedDate(now)
+			.setLastModifiedDate(now)
+			.setUserType(UserType.USER);
 		User savedUser = userRepository.save(user);
 		mailService.sendMail(user.getEmail(), "Account activation", generateActivationLink(savedUser.getId()));
-		return UserUtil.UserToUserdto(savedUser);
+		return UserUtil.userToUserdto(savedUser);
 	}
 
 
