@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebConfig {
 
 	@Value("${gmail.password}")
-	private  String gmailPassword;
+	private String gmailPassword;
 
 	private final JwtTokenProvider jwtTokenProvider;
 
@@ -61,7 +61,7 @@ public class WebConfig {
 		javaMailSender.setHost("smtp.gmail.com");
 		javaMailSender.setPort(587);
 		javaMailSender.setUsername("examplejava07@gmail.com");
-		javaMailSender.setPassword("azxj eqer zruz krwf");
+		javaMailSender.setPassword(gmailPassword);
 		javaMailSender.setJavaMailProperties(props);
 
 		return javaMailSender;
