@@ -1,4 +1,4 @@
-package com.ggit.orderstorage.service.security.jwt;
+package com.ggit.orderstorage.security.jwt;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

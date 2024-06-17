@@ -1,4 +1,4 @@
-package com.ggit.orderstorage.service.util;
+package com.ggit.orderstorage.data.util;
 
 import com.ggit.orderstorage.data.dto.auth.RegisterDto;
 import com.ggit.orderstorage.data.dto.user.UserDto;

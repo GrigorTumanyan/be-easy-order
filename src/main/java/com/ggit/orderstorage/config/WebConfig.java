@@ -1,16 +1,14 @@
 package com.ggit.orderstorage.config;
 
-import com.ggit.orderstorage.service.security.UserDetailService;
-import com.ggit.orderstorage.service.security.jwt.JwtTokenFilter;
-import com.ggit.orderstorage.service.security.jwt.JwtTokenProvider;
+import com.ggit.orderstorage.security.UserDetailService;
+import com.ggit.orderstorage.security.jwt.JwtTokenFilter;
+import com.ggit.orderstorage.security.jwt.JwtTokenProvider;
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

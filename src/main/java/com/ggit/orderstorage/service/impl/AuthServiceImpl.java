@@ -5,13 +5,13 @@ import com.ggit.orderstorage.data.dto.auth.RegisterDto;
 import com.ggit.orderstorage.data.dto.user.UserDto;
 import com.ggit.orderstorage.data.user.User;
 import com.ggit.orderstorage.data.user.UserType;
+import com.ggit.orderstorage.data.util.UserUtil;
 import com.ggit.orderstorage.exception.ConflictException;
-import com.ggit.orderstorage.exception.UserNotFoundException;
-import com.ggit.orderstorage.repository.UserRepository;
+import com.ggit.orderstorage.security.jwt.JwtTokenProvider;
 import com.ggit.orderstorage.service.AuthService;
 import com.ggit.orderstorage.service.MailService;
-import com.ggit.orderstorage.service.security.jwt.JwtTokenProvider;
-import com.ggit.orderstorage.service.util.UserUtil;
+import com.ggit.orderstorage.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,18 +26,18 @@ public class AuthServiceImpl implements AuthService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final BCryptPasswordEncoder passwordEncoder;
 	private final MailService mailService;
-	private final UserRepository userRepository;
+	private final UserService userService;
 
 
 	public AuthServiceImpl(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider,
 		BCryptPasswordEncoder passwordEncoder,
 		MailService mailService,
-		UserRepository userRepository) {
+		UserService userService) {
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.passwordEncoder = passwordEncoder;
 		this.mailService = mailService;
-		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 	@Override
@@ -49,28 +49,39 @@ public class AuthServiceImpl implements AuthService {
 			.setLastModifiedDate(now)
 			.setActive(false)
 			.setUserType(UserType.USER);
-		User savedUser = userRepository.save(user);
+		User savedUser = userService.save(user);
 		mailService.sendMail(user.getEmail(), "Account activation", generateActivationLink(savedUser.getId()));
 		return UserUtil.userToUserdto(savedUser);
 	}
 
 
 	@Override
-	public List<String> login(AuthenticationRequestDto dto) {
+	public UserDto login(AuthenticationRequestDto dto, HttpServletResponse httpResponse) {
 		var email = dto.getEmail();
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, dto.getPassword()));
-		User user = userRepository.findByEmail(dto.getEmail())
-			.orElseThrow(() -> new UserNotFoundException("User with email: %s not found"));
+		User user = userService.findByEmail(dto.getEmail());
 		List<String> tokens = createTokens(email, user.getUserType());
+		setTokens(tokens, httpResponse);
 		user.setRefreshToken(tokens.get(1))
 			.setLastModifiedDate(LocalDateTime.now());
-		userRepository.save(user);
-		return tokens;
+		userService.save(user);
+		return UserUtil.userToUserdto(user);
+	}
+
+	@Override
+	public String activateAccount(Long id) {
+		User user = userService.findById(id);
+		if (Boolean.TRUE.equals(user.getActive())) {
+			throw new ConflictException(String.format("User with id: %s has already activated", id));
+		}
+		user.setLastModifiedDate(LocalDateTime.now())
+			.setActive(true);
+		userService.save(user);
+		return "User successfully activated ";
 	}
 
 	/**
-	 *
-	 * @param email user's email which will serves for creating appropriate token
+	 * @param email    user's email which will serves for creating appropriate token
 	 * @param userType user's type which serves for correct authentication
 	 * @return 2 Strings. The first string is access token, the second is refresh token
 	 */
@@ -79,23 +90,13 @@ public class AuthServiceImpl implements AuthService {
 		return jwtTokenProvider.createTokens(email, userType);
 	}
 
-	@Override
-	public String activateAccount(Long id) {
-		User user = userRepository.findById(id)
-			.orElseThrow(() -> new UserNotFoundException(String.format("User with id: %s not found", id)));
-		if (Boolean.TRUE.equals(user.getActive())) {
-			throw new ConflictException(String.format("User with id: %s has already activated", id));
-		}
-		user.setLastModifiedDate(LocalDateTime.now())
-			.setActive(true);
-		userRepository.save(user);
-		return "User successfully activated ";
-	}
-
 	private String generateActivationLink(Long id) {
 		String link = "http://localhost:8080/auth/activation/" + id;
 		return "Please click on this link for activating your account \n" + link;
 	}
 
-
+	private void setTokens(List<String> tokens, HttpServletResponse httpResponse) {
+		httpResponse.setHeader("access_token", tokens.get(0));
+		httpResponse.setHeader("refresh_token", tokens.get(1));
+	}
 }
