@@ -19,6 +19,8 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -48,6 +50,20 @@ public class WebConfig {
 			.logout(LogoutConfigurer::permitAll)
 			.addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfig() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+					.allowedOrigins("http://localhost:3000")
+					.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+					// purpose of bottom line is give access front end side to get access token
+					.exposedHeaders("Access_token", "Refresh_token");
+			}
+		};
 	}
 
 	@Bean

@@ -27,14 +27,12 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	@CrossOrigin(origins = "http://localhost:3000")
 	public ResponseEntity<UserDto> register(@RequestBody RegisterDto dto) {
 		UserDto register = authService.register(dto);
 		return new ResponseEntity<>(register, HttpStatus.CREATED);
 	}
 
 	@PostMapping("/login")
-	@CrossOrigin(origins = "http://localhost:3000")
 	public ResponseEntity<UserDto> login(@RequestBody AuthenticationRequestDto dto, HttpServletResponse httpResponse) {
 		var userDto = authService.login(dto, httpResponse);
 		return new ResponseEntity<>(userDto, HttpStatus.OK);
