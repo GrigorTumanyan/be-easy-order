@@ -2,6 +2,7 @@ package com.ggit.orderstorage.security.jwt;
 
 import com.ggit.orderstorage.data.user.User;
 import com.ggit.orderstorage.data.user.UserType;
+import com.ggit.orderstorage.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -39,9 +40,11 @@ public class JwtTokenProvider {
 	private Long refreshTokenTime;
 
 	private final UserDetailsService userDetailsService;
+	private final UserService userService;
 
-	public JwtTokenProvider(UserDetailsService userDetailsService) {
+	public JwtTokenProvider(UserDetailsService userDetailsService, UserService userService) {
 		this.userDetailsService = userDetailsService;
+		this.userService = userService;
 	}
 
 	@PostConstruct
@@ -79,7 +82,7 @@ public class JwtTokenProvider {
 		if (refreshTokenWithBearer != null && refreshTokenWithBearer.startsWith("Bearer")) {
 			String refreshToken = refreshTokenWithBearer.substring(7);
 			String email = getEmail(refreshToken);
-			User user = new User().setId(1L).setEmail("Grigor@gmail.com");
+			User user = userService.findByEmail(email);
 			if (refreshToken.equals(user.getRefreshToken())) {
 				try {
 					Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(refreshToken);
@@ -88,7 +91,7 @@ public class JwtTokenProvider {
 				}
 				List<String> tokens = createTokens(email, user.getUserType());
 				user.setRefreshToken(tokens.get(1));
-//				userRepository.save(user);
+				userService.save(user);
 				return tokens;
 			}
 		}
@@ -98,10 +101,7 @@ public class JwtTokenProvider {
 	public boolean validateToken(String token) {
 		if (token != null) {
 			Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token);
-			if (claims.getBody().getExpiration().before(new Date())) {
-				return false;
-			}
-			return true;
+			return !claims.getBody().getExpiration().before(new Date());
 		}
 		return false;
 	}
@@ -114,11 +114,11 @@ public class JwtTokenProvider {
 
 	private String accessToken(String email, UserType userType) {
 		Claims claims = getClaims(email, userType);
-
+		Date currentTime = new Date(System.currentTimeMillis());
 		return Jwts.builder()
 			.setClaims(claims)
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + validateMilliseconds))//
+			.setIssuedAt(currentTime)
+			.setExpiration(new Date(currentTime.getTime() + validateMilliseconds))//
 			.signWith(getKeyForSign())
 			.compact();
 	}
